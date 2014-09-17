@@ -11,9 +11,6 @@ func1 <- function(v1)
     length(which(is.na(v1)))
 }
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# in future functions, set na.rm=TRUE
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #### Prob 2 ####
 # 2. Write a function that takes a data frame as input and returns a 
@@ -38,18 +35,15 @@ func2 <- function(df2)
 
 # interpretation of problem statement is that functions that provide the
 # desired values immediately are not allowed to be used
-# these following are included: summary(), min(), max(),
-# median(), mean(), max(), sd()
+# This specifically means the following shouldn't be used:
+# summary(), min(), max(), median(), mean(), max(), sd()
 
-# sort() is acceptable to use
+# sort() is being considered acceptable to use
 
 func3 <- function(nv3)
 {
     sortnv3 <- sort(nv3)
-#     built-in sort removes NA
-#     if time permits might try to implement a sort algorithm
-#     might use an algorithm from Programming class
-#     algorithm would need to remove NAs
+# built-in sort() removes NA
     lensnv3 <- length(sortnv3)
     minnv3 <- sortnv3[1]
     maxnv3 <- sortnv3[lensnv3]
@@ -65,19 +59,20 @@ func3 <- function(nv3)
 #         firstqrt <- sortnv3[lensnv3 %/% 4 + 1]
 #         thirdqrt <- sortnv3[3 * lensnv3 %/% 4 + 1]
     }
-
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#     quartiles are not accurate
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# quartiles were not implemented
+# beginning of assignments are commented out
 
     stdev <- sqrt (sum((sortnv3 - meannv3) ^ 2) / lensnv3)
-#     the value calculated here seems to deviate from sd()
+# the value calculated here seems to deviate from the built-in sd()
+# but I couldn't figure out why
 
-    list(Min = minnv3, Median = mediannv3, Mean = meannv3, Max = maxnv3, SD = stdev, NAs = func1(nv3))
+    list(Min = minnv3, Median = mediannv3, Mean = meannv3, Max = maxnv3, 
+         SD = stdev, NAs = func1(nv3))
+# quartiles are not included because they were not completely implemented
 
 }
 # https://stat.ethz.ch/pipermail/r-help/2005-June/074179.html
-# used to find quotient (%/%)
+# used to find quotient function (%/%)
 # http://en.wikipedia.org/wiki/Standard_deviation
 # used to confirm standard deviation formula
 
@@ -86,6 +81,7 @@ func3 <- function(nv3)
 # Discussion Board > Forum: Week 3 Assignments > 
 #     Thread: R bug for Summary - incorrect 1st and 3rd quartile
 # explains some different accepted methods for calculating quartiles
+# could use for reference but didn't get to completely implement
 
 
 #### Prob 4 ####
@@ -101,23 +97,19 @@ func4 <- function(v4)
     fv4 <- as.factor(v4)
     levs <- levels(fv4)
     distinctelem <- length(levs)
-    
     levfreq <- c()
     for(iter in 1:distinctelem)
     {
         levfreq[iter] <- length(which(fv4 == levs[iter]))
     }
-    mc <- max(levfreq)
-#     names(levfreq) <- names(levs)
-
-#     return the name of the most freq level
-
-#     list(NumElem = distinctelem, NAs = func1(v4))
-    list(DistinctElem = distinctelem, MostCommon = mc, NAs = func1(v4))
-#     list(NumElem = distinctelem, MostCommon = mc, FreqMostCommon = fmc, NAs = func1(v4))
-    
-    
+# seems like an apply could be used here instead of the loop    
+    fmc <- max(levfreq)
+    mc <- levs[levfreq == max(levfreq)]
+    list(NumElem = distinctelem, MostCommon = mc, FreqMostCommon = fmc, NAs = func1(v4))
 }
+# learned that must be careful using which() because it really counts NAs as equivalent
+# to the test item when the vector is character type
+# not exactly sure how this function works to eliminate the NAs from the counts
 
 
 #### Prob 5 ####
@@ -130,7 +122,6 @@ func5 <- function(lv5)
     numtrue <- length(which(lv5 == TRUE))
     numfalse <- length(which(lv5 == FALSE))
     proportiontrue <- numtrue / (numtrue + numfalse)
-    
     list(TrueVals = numtrue, FalseVals = numfalse, TrueProportion = proportiontrue, 
          NAs = func1(lv5))
 }
@@ -160,7 +151,6 @@ func6 <- function(df6)
             colsummary[[iter]] <- func4(df6[, iter])
         }
     }
-    
+    names(colsummary) <- names(df6)
     print(colsummary)
-#     need to name each list within colsummary
 }
